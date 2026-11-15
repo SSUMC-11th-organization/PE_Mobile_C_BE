@@ -1,4 +1,3 @@
-// src/main/java/com/umc/movie/entity/BaseTimeEntity.java
 package com.umc.movie.entity;
 
 import jakarta.persistence.Column;
@@ -13,13 +12,14 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BaseTimeEntity {
 
-    // 처음 저장될 때 Hibernate가 자동으로 채워줍니다. 이후에는 절대 바뀌지 않습니다.
+    // 처음 INSERT 될 때 현재 시각이 자동으로 들어간다.
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // 이 엔티티가 저장될 때마다 Hibernate가 현재 시각으로 자동 갱신합니다.
+    // 엔티티 값이 바뀌어 UPDATE 될 때마다 현재 시각으로 갱신된다.
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
 }
