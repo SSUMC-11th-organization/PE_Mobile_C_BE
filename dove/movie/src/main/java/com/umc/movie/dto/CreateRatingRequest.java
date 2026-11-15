@@ -1,14 +1,9 @@
-// src/main/java/com/umc/movie/dto/CreateRatingRequest.java
 package com.umc.movie.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record CreateRatingRequest(
-        @NotNull(message = "영화 ID를 입력해주세요.")
+        @NotNull(message = "영화 ID를 입력해주세요")
         @Positive(message = "영화 ID는 양수여야 합니다.")
         Long movieId,
 
