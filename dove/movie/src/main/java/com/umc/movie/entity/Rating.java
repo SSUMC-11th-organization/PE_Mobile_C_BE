@@ -1,4 +1,3 @@
-// src/main/java/com/umc/movie/entity/Rating.java
 package com.umc.movie.entity;
 
 import jakarta.persistence.*;
@@ -8,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "rating", uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "movie_id"}))
+@Table(name = "rating",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "movie_id"})
+) // member_id와 movie_id를 튜플로 중복을 막음
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Rating extends BaseTimeEntity {

@@ -1,4 +1,3 @@
-// src/main/java/com/umc/movie/config/PasswordConfig.java
 package com.umc.movie.config;
 
 import org.springframework.context.annotation.Bean;
@@ -8,8 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class PasswordConfig {
-
-    // spring-boot-starter-security 대신 spring-security-crypto만 써서 해시 기능만 가져옵니다.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
