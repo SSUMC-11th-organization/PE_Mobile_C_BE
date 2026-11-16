@@ -10,7 +10,7 @@ public record FavoriteResponse(
         LocalDateTime createdAt
 ) {
     public static FavoriteResponse from(Favorite favorite) {
-        return new FavoriteResponse (
+        return new FavoriteResponse(
                 favorite.getFavoriteId(),
                 favorite.getMovieId(),
                 favorite.getCreatedAt()
