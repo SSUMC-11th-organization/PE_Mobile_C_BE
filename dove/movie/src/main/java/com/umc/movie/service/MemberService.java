@@ -1,19 +1,17 @@
-// src/main/java/com/umc/movie/service/MemberService.java
 package com.umc.movie.service;
 
-import com.umc.movie.dto.EmailCheckResponse;
-import com.umc.movie.dto.MemberResponse;
-import com.umc.movie.dto.NicknameCheckResponse;
-import com.umc.movie.dto.SignUpRequest;
+import com.umc.movie.dto.*;
 import com.umc.movie.entity.Member;
+import com.umc.movie.exception.ApiException;
 import com.umc.movie.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import com.umc.movie.exception.ErrorCode;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor // 필드를 받는 생성자를 자동 생성해줌
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -34,19 +32,42 @@ public class MemberService {
     @Transactional
     public MemberResponse signUp(SignUpRequest request) {
         if (memberRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            throw new ApiException(ErrorCode.EMAIL_DUPLICATED);
         }
         if (memberRepository.existsByNickname(request.nickname())) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+            throw new ApiException(ErrorCode.NICKNAME_DUPLICATED);
         }
 
         Member member = Member.builder()
                 .email(request.email())
-                .password(passwordEncoder.encode(request.password())) // 평문 대신 bcrypt 해시(60자)를 저장합니다.
+                .password(passwordEncoder.encode(request.password()))
                 .nickname(request.nickname())
                 .build();
 
         Member savedMember = memberRepository.save(member);
         return new MemberResponse(savedMember.getMemberId(), savedMember.getEmail(), savedMember.getNickname());
+    }
+
+    @Transactional(readOnly = true)
+    public MemberInfoResponse getMyInfo(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(ErrorCode.MEMBER_NOT_FOUND));
+
+        return MemberInfoResponse.from(member);
+    }
+
+    @Transactional
+    public MemberInfoResponse updateInfo(Long memberId, MemberUpdateRequest request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(ErrorCode.MEMBER_NOT_FOUND));
+
+        if (memberRepository.existsByNicknameAndMemberIdNot(request.nickname(), memberId)) {
+            throw new ApiException(ErrorCode.NICKNAME_DUPLICATED);
+        }
+
+        member.updateNickname(request.nickname());
+        memberRepository.save(member);
+
+        return MemberInfoResponse.from(member);
     }
 }
